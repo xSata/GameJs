@@ -1,0 +1,39 @@
+<canvas id="ctx" width="500" height="500" style="border:1px solid #000000;"></canvas>
+
+<script src="
+https://cdn.socket.io/socket.io-1.4.5.js"
+></script>
+
+<script>
+	var ctx = document.getElementById("ctx").getContext("2d");
+	ctx.font = '30px Arial';
+	
+	var socket = io();
+
+	socket.on("newPositions",function(data){
+		ctx.clearRect(0,0,500,500);
+		for(var i=0; i < data.length; i++){
+            ctx.save();
+            ctx.fillStyle = data[i].color;
+            ctx.fillRect(data[i].x-data[i].width/2,data[i].y-data[i].height/2,data[i].width,data[i].height);
+            //ctx.fillRect(data[i].x,data[i].y,data[i].width,data[i].height);
+            ctx.restore();
+        }
+	});
+
+
+    document.onmousemove = function(mouse){
+        var mouseX = mouse.clientX - document.getElementById('ctx').getBoundingClientRect().left;
+        var mouseY = mouse.clientY - document.getElementById('ctx').getBoundingClientRect().top;
+        
+        socket.emit('playerPosition',{
+            playerX: mouseX,
+            playerY: mouseY,
+        });
+        
+    }
+
+
+
+
+</script>
